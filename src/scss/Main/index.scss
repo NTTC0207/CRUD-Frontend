@@ -1,0 +1,31 @@
+.searchTransition{
+    transition-duration: 0.5s;
+}
+
+*{
+    
+    ::-webkit-scrollbar {
+		width: 4px;
+		background: transparent;
+	}
+
+	/* Track */
+	::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	/* Handle */
+	::-webkit-scrollbar-thumb {
+		background: #888;
+	}
+
+	/* Handle on hover */
+	::-webkit-scrollbar-thumb:hover {
+		background: #555;
+	}
+}
+
+.MyLayout{
+	height: auto;
+
+}
