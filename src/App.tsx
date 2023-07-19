@@ -1,46 +1,51 @@
-import React, { useState,useMemo } from 'react';
+import React, { useState,useMemo, useEffect } from 'react';
 import logo from './logo.svg';
 import {Routes,Route} from 'react-router-dom'
 import Login from './pages/Authentication/Login'
 import Transaction from './pages/Transaction/Transaction';
 import { Button, ConfigProvider ,Layout, ColorPicker, theme} from 'antd';
-import type { Color,ColorPickerProps } from 'antd/es/color-picker';
 import "./scss/main.scss"
+import { useTranslation } from "react-i18next";
 
-const App=()=>{
-  // const { token } = theme.useToken();
-  // const [colorHex, setColorHex] = useState<Color | string>('#1677ff');
-  // const [formatHex, setFormatHex] = useState<ColorPickerProps['format']>('hex');
-  // const hexString = useMemo(
-  //   () => (typeof colorHex === 'string' ? colorHex : colorHex.toHexString()),
-  //   [colorHex],
-  // );
+const { defaultAlgorithm, darkAlgorithm } = theme;
+
+
+const App:React.FC=()=>{
+  const { t, i18n } = useTranslation();
+  const [mode, setMode] =useState<boolean>(false);
+  
+  useEffect(()=>{
+    const lang =localStorage.getItem("language")?.toString();
+ i18n.changeLanguage(lang === null || lang === undefined ? "en" : lang)
+},[])
+
+  const changeMode=()=>{
+    localStorage.setItem("mode", mode.toString())
+    setMode(!mode)
+  }
+  useEffect(()=>{
+
+  setMode(localStorage.getItem("mode") === "true" ? false: true); 
+   
+},[])
+
+
   return (
     <div>
-
-{/* <ColorPicker format={formatHex}
-              style={{position:'absolute',top:"0",left:"500px",zIndex:"1000"}}
-              value={colorHex}
-              onChange={setColorHex}
-              onFormatChange={setFormatHex}/> */}
-
       <ConfigProvider
     theme={{
+      algorithm:  mode ? darkAlgorithm : defaultAlgorithm ,
       token: {
         colorPrimary: "#42b883",
-
-        
-     
-   
-      
       },
     }}
   >
+  
             <div >
-    
+            {/* <p>{t('name')}</p>  */}
             <Routes>
               <Route path='/' element={<Login />} />
-              <Route path="/transaction" element={<Transaction/>} />
+              <Route path="/transaction" element={<Transaction changeMode={changeMode} mode={mode} />} />
 
             </Routes>
             </div>

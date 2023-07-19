@@ -1,0 +1,21 @@
+{
+  
+   "user":"User",
+   "transaction":"Transaction",
+   "setting" :"Settings",
+   "home" :"home",
+   "list":"list",
+   "search" :"Search for modules",
+   "profile" :"Profile",
+   "language" :"Language",
+   "update":"Update",
+   "view" :"View",
+   "no": "No",
+   "first":"First",
+   "last":"Last",
+   "email":"Email",
+   "image":"Image",
+   "role" :"Role",
+   "date" : "Date",
+   "action" :"Action"
+  }

@@ -1,9 +1,10 @@
-import React,{useEffect,useState} from 'react';
+import React,{useEffect,useState,useRef} from 'react';
 import { DownOutlined } from '@ant-design/icons';
 import type { TableColumnsType } from 'antd';
 import { Badge, Dropdown, Space, Table ,Avatar,Button,Skeleton,Popconfirm,Modal} from 'antd';
 import axios from 'axios'
 import moment from 'moment'
+import { useTranslation } from 'react-i18next'
 
 
 const endpoint ="http://localhost:4000/graph"
@@ -63,15 +64,20 @@ interface UserDataResponse{
 }
 
 
+
 const items = [
   { key: '1', label: 'Action 1' },
   { key: '2', label: 'Action 2' },
 ];
 
 const AllUserData: React.FC = () => {
+  const { t, i18n } = useTranslation();
 
   const [user,setUser]=useState<IUser[]>();
   const [loader,setLoader] = useState<Boolean>(false)
+  
+
+  const [open, setOpen] = useState<boolean>(false);
 
   const mySkeleton=
   <div>
@@ -111,6 +117,7 @@ const AllUserData: React.FC = () => {
   },[])
 
   const expandedRowRender = () => {
+  
     const columns: TableColumnsType<ExpandedDataType> = [
       { title: 'ID', dataIndex: 'key', key: 'date' },
       { title: 'Date', dataIndex: 'date', key: 'date' },
@@ -139,25 +146,25 @@ const AllUserData: React.FC = () => {
         isArchieved:"No"
       });
     }
-    return <Table columns={columns} dataSource={data} pagination={false} />;
+    return <Table  columns={columns} dataSource={data} pagination={false} />;
   };
 
   const columns: TableColumnsType<IUser> = [
-    { title: 'No',dataIndex:"id", key: 'name'}, // third parameter in render is index
-    { title: 'First', dataIndex: 'firstname', key: 'name' },
-    { title: 'Last', dataIndex: 'lastname', key: 'name' },
-    { title: 'Email', dataIndex: 'email', key: 'platform' },
-    { title: 'Image', dataIndex: 'image_url', key: 'version',render:(item)=><><Avatar alt="avatar" src={`${item}`} size="default" /> </> },
-    { title: 'Role', dataIndex: 'role', key: 'upgradeNum' },
-    { title: 'Date',dataIndex:"created_at", key: 'createdAt',render:(item)=><div>{moment(item).format("MMM Do YY")}</div> },
-    { title: 'Action', key: 'operation', render: (item) =>
+    { title:<> {t("no")}</> ,dataIndex:"id", key: 'name'}, // third parameter in render is index
+    { title: <> {t("first")}</> , dataIndex: 'firstname', key: 'name' },
+    { title:<> {t("last")}</>  , dataIndex: 'lastname', key: 'name' },
+    { title: <> {t("email")}</> , dataIndex: 'email', key: 'platform' },
+    { title: <> {t("image")}</> , dataIndex: 'image_url', key: 'version',render:(item)=><><Avatar alt="avatar" src={`${item}`} size="default" /> </> },
+    { title: <> {t("role")}</>, dataIndex: 'role', key: 'upgradeNum' },
+    { title: <> {t("date")}</> ,dataIndex:"created_at", key: 'createdAt',render:(item)=><div>{moment(item).format("MMM Do YY")}</div> },
+    { title: <> {t("action")}</> , key: 'operation', render: (item) =>
     <div style={{display:"flex"}}>
-       <Button type="primary">View</Button> 
+       <Button  type="primary">  {t("view")}</Button> 
        <Popconfirm
        title={`delete the task ${item.firstname} with id ${item.id}`}
        description ="Are you sure to delete this task?"
        >
-       <Button type="primary" style={{marginLeft:"10px"}} danger>Update</Button> 
+       <Button  type="primary" style={{marginLeft:"10px"}} danger>{t("update")}</Button> 
        </Popconfirm>
        
        </div>
@@ -179,15 +186,19 @@ const AllUserData: React.FC = () => {
 
   return (
     <>
+    
     {
       <Table
+      
       columns={columns}
       locale={{
         emptyText: loader ? <div> {mySkeleton} </div> : null,
         
       }}
+      
      // loading={true} use to load data
       rowKey={(record)=> record.id}
+      
        pagination={{onChange:(page)=>{
     
        },
@@ -195,10 +206,9 @@ const AllUserData: React.FC = () => {
         total:200}}
       expandable={{ expandedRowRender, defaultExpandedRowKeys: ['0'] }}
       dataSource={user} />
-   
-    
-    } 
 
+    } 
+   
     </>
   );
 };
