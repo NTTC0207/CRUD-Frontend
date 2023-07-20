@@ -24,16 +24,7 @@ const query = `query {
 }`;
 
 
-interface DataType {
-  key: React.Key;
-  name: string;
-  platform: string;
-  version: string;
-  upgradeNum: number;
-  creator: string;
-  createdAt: string;
 
-}
 
 interface ExpandedDataType {
   key: React.Key;
@@ -171,18 +162,18 @@ const AllUserData: React.FC = () => {
     },
   ];
 
-  const data: DataType[] = [];
-  for (let i = 0; i < 23; ++i) {
-    data.push({
-      key: i.toString(),
-      name: 'Screen',
-      platform: 'iOS',
-      version: '10.3.4.5654',
-      upgradeNum: 500,
-      creator: 'Jack',
-      createdAt: '2014-12-24 23:12:00',
-    });
-  }
+  // const data: DataType[] = [];
+  // for (let i = 0; i < 23; ++i) {
+  //   data.push({
+  //     key: i.toString(),
+  //     name: 'Screen',
+  //     platform: 'iOS',
+  //     version: '10.3.4.5654',
+  //     upgradeNum: 500,
+  //     creator: 'Jack',
+  //     createdAt: '2014-12-24 23:12:00',
+  //   });
+  // }
 
   return (
     <>

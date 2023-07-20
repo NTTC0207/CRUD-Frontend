@@ -1,14 +1,16 @@
-import React, { useState,useMemo, useEffect } from 'react';
+import React, { useState,useMemo, useEffect ,lazy ,Suspense} from 'react';
 import logo from './logo.svg';
 import {Routes,Route} from 'react-router-dom'
-import Login from './pages/Authentication/Login'
-import Transaction from './pages/Transaction/Transaction';
-import { Button, ConfigProvider ,Layout, ColorPicker, theme} from 'antd';
+// import Login from './pages/Authentication/Login'
+// import Transaction from './pages/Transaction/Transaction';
+import { Button, ConfigProvider ,Layout, ColorPicker, theme ,Typography} from 'antd';
 import "./scss/main.scss"
 import { useTranslation } from "react-i18next";
 
 const { defaultAlgorithm, darkAlgorithm } = theme;
-
+const {Title} = Typography
+const Login = lazy(()=> import("./pages/Authentication/Login"))
+const Transaction = lazy(()=> import("./pages/Transaction/Transaction"))
 
 const App:React.FC=()=>{
   const { t, i18n } = useTranslation();
@@ -42,12 +44,13 @@ const App:React.FC=()=>{
   >
   
             <div >
-            {/* <p>{t('name')}</p>  */}
+              <Suspense fallback={<Layout style={{height:"100vh",display:"flex",justifyContent:"center",alignItems:"center"}}> <Title level={1} >Loading ... </Title> </Layout>}>
             <Routes>
               <Route path='/' element={<Login />} />
               <Route path="/transaction" element={<Transaction changeMode={changeMode} mode={mode} />} />
 
             </Routes>
+            </Suspense>
             </div>
     
             </ConfigProvider>

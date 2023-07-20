@@ -29,3 +29,35 @@
 .MyLayout{
 	height: auto;
 }
+
+.caretStyle{
+	margin-left: 4px;
+	.anticon-caret-down{
+		:hover{
+			animation-name: upDown;
+			animation-iteration-count: infinite;
+			animation-duration: .5s;
+			animation-timing-function: ease-in-out;
+		}
+	
+	}
+
+}
+
+@keyframes upDown {
+	0%{
+	   transform: translateY(0px);
+	}
+	25%{
+		transform: translateY(-2px);
+	}
+	50%{
+	   transform: translateY(0px);
+	}
+	75%{
+		transform: translateY(2px)
+	}
+	100%{
+		transform: translateY(0px)
+	}
+}
