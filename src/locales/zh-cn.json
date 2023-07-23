@@ -17,9 +17,8 @@
    "image":"头像",
    "role" :"角色",
    "date" : "日期",
-   "action" :"互动"
-
-
-
+   "action" :"互动",
+   "amount" :"数额",
+   "graph" :"图标"
 
   }

@@ -19,7 +19,8 @@ import {
   import { message, Space, Tabs ,Button,Divider,Tooltip} from 'antd';
   import type { CSSProperties } from 'react';
   import { useState } from 'react';
-  import { useAuth0 } from "@auth0/auth0-react";
+  import { useCookies } from 'react-cookie';
+
   
   type LoginType =  'account' | 'register'; // this is actually number
   
@@ -32,7 +33,18 @@ import {
   
   const Login = () => {
     const [loginType, setLoginType] = useState<LoginType>('account');
-    const { loginWithRedirect } = useAuth0();
+    const [authenticated, setAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(undefined);
+  const [cookies] = useCookies(['XSRF-TOKEN']);
+  
+  const loginWithRedirect = () => {
+    let port = (window.location.port ? ':' + window.location.port : '');
+    if (port === ':3000') {
+      port = ':8888';
+    }
+    window.location.href = `//${window.location.hostname}${port}/api/profile`;
+  }
 
     return (
         <AuthenticationWrapper style={{height:"100vh",display:"flex",justifyContent:"center",alignItems:"center"}}>

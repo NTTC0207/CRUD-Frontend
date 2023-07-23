@@ -1,5 +1,4 @@
 {
-  
    "user":"User",
    "transaction":"Transaction",
    "setting" :"Settings",
@@ -17,5 +16,7 @@
    "image":"Image",
    "role" :"Role",
    "date" : "Date",
-   "action" :"Action"
+   "action" :"Action",
+   "amount" :"Amount",
+   "graph" :"Graph"
   }

@@ -95,18 +95,18 @@ const AllUserData: React.FC = () => {
   </div>
  
   const getUserData=async()=>{
-    setLoader(true)
+    // setLoader(true)
 
-    await setTimeout(() => {
-       axios.post<UserDataResponse>(endpoint, { query })
-      .then(res=>{
-          setLoader(false)
-          setUser(res.data.data.getAllUsers)
-          console.log("Test data" ,res.data.data.getAllUsers)
-      })
-      .catch((err)=>console.log(err))
-      .finally(()=>setLoader(false))
-    }, 3000);
+    // await setTimeout(() => {
+    //    axios.post<UserDataResponse>(endpoint, { query })
+    //   .then(res=>{
+    //       setLoader(false)
+    //       setUser(res.data.data.getAllUsers)
+    //       console.log("Test data" ,res.data.data.getAllUsers)
+    //   })
+    //   .catch((err)=>console.log(err))
+    //   .finally(()=>setLoader(false))
+    // }, 3000);
  
   
   }
