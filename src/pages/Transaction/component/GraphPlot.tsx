@@ -1,14 +1,22 @@
-import { useState, useEffect, memo, CSSProperties } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { Line } from '@ant-design/plots';
-import { Typography, Table, Button, Tooltip, Modal, Form, Input,Popconfirm } from 'antd';
+import { Typography, Table, Button, Tooltip, Modal, Form, Input, Popconfirm } from 'antd';
 import moment from 'moment';
 import { isEqual } from "lodash-es";
 import { CaretDownOutlined } from "@ant-design/icons"
 import { useCookies } from 'react-cookie';
 import type { TableColumnsType } from 'antd';
 import { useTranslation } from 'react-i18next'
-const { Text, Title } = Typography
+import { MonthlyTransaction } from '../Interface/userTransactionInterface';
+import { updateTransResponseById,sliceTransResponseById } from '../utils/userTransactionUtils';
+const {  Title } = Typography
 
+type DataProps = {
+  monthData: MonthlyTransaction[],
+  loading: boolean,
+  asyncFetch: () => void
+  }
+  
 
 interface Trans {
   id: number
@@ -22,14 +30,8 @@ interface TransResponse {
   date: string
 }
 
-
-const ori: CSSProperties = {
-  height: "100%"
-}
-const fix: CSSProperties = {
-  height: "200px"
-}
 const MonthTransactionGraph: React.FC<any> = memo(
+
   ({ data, onReady }) => {
     var config: any = {
       data,
@@ -37,7 +39,7 @@ const MonthTransactionGraph: React.FC<any> = memo(
       xField: 'formattedDate',
       yField: 'achievedQuota',
       xAxis: {
-        // type:"timeCat",
+    
         tickCount: 4,
       },
       slider: {
@@ -53,19 +55,23 @@ const MonthTransactionGraph: React.FC<any> = memo(
   }
 );
 
-const GraphPlot: React.FC = () => {
+const GraphPlot: React.FC<DataProps> = ({monthData,asyncFetch}) => {
   const { t, i18n } = useTranslation();
-  const [data, setData] = useState<Trans[]>([]);
+  const [form] = Form.useForm();
   const [transData, setTransData] = useState<TransResponse[]>([]);
   const [singleData, setSingleData] = useState<Trans>();
+  const [updateData, setUpdataData] = useState<TransResponse>()
   const [myDisplay, setDisplay] = useState<boolean>(false)
   const [cookies] = useCookies(['XSRF-TOKEN']);
   const [loading, setLoading] = useState<boolean>(false)
+  const [count, setCount] = useState<number>(0)
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen2, setIsModalOpen2] = useState(false);
 
-  const handleDelete = async(val :number) => {
+
+  const handleDelete = async (val: number) => {
     console.log(cookies['XSRF-TOKEN'])
-    await fetch('/api/transaction/' + val,{
+    await fetch('/api/transaction/' + val, {
       method: 'DELETE',
       headers: {
         'X-XSRF-TOKEN': cookies['XSRF-TOKEN'],
@@ -74,48 +80,39 @@ const GraphPlot: React.FC = () => {
       },
       credentials: 'include'
     })
-      .then(()=> asyncFetch())
+      .then((res) => {
+        if (res.status === 200) {
+        setTransData(sliceTransResponseById(transData,val))
+        }
+      })
+      .then(() => asyncFetch())
       .catch(err => console.log(err))
   }
 
   const columns: TableColumnsType<TransResponse> = [
-    { title: 'ID', dataIndex: 'id', key: 'date' },
-    { title: 'Amount', dataIndex: 'amount', key: 'name', render: (item) => <div>RM {item}</div> },
-    { title: <> {t("date")}</>, dataIndex: "date", key: 'createdAt', render: (item) => <div>{moment(item).format("l")}</div> },
-
+    { title: 'ID', dataIndex: 'id', key: 'id' },
+    { title: 'Amount', dataIndex: 'amount', key: 'amount', render: (item) => <div>RM {item}</div> },
+    { title: <> {t("date")}</>, dataIndex: "date", key: 'date', render: (item) => <>{moment(item).subtract(1, "month").format("L")}</> },
     {
       title: 'Operation',
-      dataIndex: 'id',
       key: 'operation',
-      render: (id:number) => (
+      render: (item: TransResponse) => (
         <div>
-          <Button type="primary" >Update</Button>
+          <Button type="primary" onClick={() => showModal2(item)} >Update</Button>
           <Popconfirm
-       title={`delete the task  with id ${id}`}
-       description ="Are you sure to delete this task?"
-       onConfirm={()=>handleDelete(id)}
-       >
-       <Button type="primary"  danger style={{ marginLeft: "10px" }}>Delete</Button>
-       </Popconfirm>
-        
+            title={`delete the task  with id ${item.id}`}
+            description="Are you sure to delete this task?"
+            onConfirm={() => handleDelete(item.id)}
+          >
+            <Button type="primary" danger style={{ marginLeft: "10px" }}>Delete</Button>
+          </Popconfirm>
+
         </div>
       ),
     },
   ];
 
 
-  useEffect(() => {
-    asyncFetch();
-  }, []);
-
-  const asyncFetch = async () => {
-    await fetch('/api/month')
-      .then((response) => response.json())
-      .then((json) => setData(json))
-      .catch((error) => {
-        console.log('fetch data failed', error);
-      });
-  };
 
   const handleDisplay = (val: boolean) => {
     setDisplay(val)
@@ -125,21 +122,31 @@ const GraphPlot: React.FC = () => {
     setDisplay(false)
   }
 
-  const handleGetMonthlyTransaction = async (values: number) => {
+  const handleGetMonthlyTransaction = async (values: any, initial: number) => {
     setLoading(true)
-    console.log(cookies['XSRF-TOKEN'])
-    await fetch('/api/transaction/' + values)
+    await fetch(`/api/transaction/${values}/${initial}`)
       .then((response) => response.json())
       .then((json) => setTransData(json))
       .catch(err => console.log(err))
       .finally(() => setLoading(false))
   }
 
+  const handleGetMonthlyCount = async (values: number) => {
+    setLoading(true)
+    await fetch(`/api/transaction/count/${values}`)
+      .then((response) => response.json())
+      .then((json) => setCount(json))
+      .catch(err => console.log(err))
+      .finally(() => setLoading(false))
+
+  }
+
   const handleSingle = (dataObj: Trans) => {
 
     setSingleData(dataObj)
 
-    handleGetMonthlyTransaction(dataObj.id)
+    handleGetMonthlyTransaction(dataObj.id, 1)
+    handleGetMonthlyCount(dataObj.id)
     console.log(dataObj)
 
   }
@@ -156,6 +163,20 @@ const GraphPlot: React.FC = () => {
     setIsModalOpen(false);
   };
 
+  const showModal2 = (item: TransResponse) => {
+    setIsModalOpen2(true);
+    setUpdataData(item);
+    form.setFieldsValue({ amount: item.amount })
+  };
+
+  const handleOk2 = () => {
+    setIsModalOpen2(false);
+  };
+
+  const handleCancel2 = () => {
+    setIsModalOpen2(false);
+  };
+
   const onFinish = async (values: any) => {
     console.log(cookies['XSRF-TOKEN'])
     await fetch('/api/transaction', {
@@ -169,12 +190,36 @@ const GraphPlot: React.FC = () => {
       credentials: 'include'
     })
       .then(res => console.log(res))
-      .then(()=>setIsModalOpen(false))
-      .then(()=> asyncFetch())
+      .then(() => form.resetFields())
+      .then(() => setIsModalOpen(false))
+      .then(() => asyncFetch())
+      .catch(err => console.log(err))
+  };
+
+  const onUpdate = async (values: any) => {
+    console.log(values)
+    await fetch(`/api/transaction/${values.id}`, {
+      method: 'PUT',
+      headers: {
+        'X-XSRF-TOKEN': cookies['XSRF-TOKEN'],
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(values),
+      credentials: 'include'
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          setTransData(updateTransResponseById(transData,values.id, values.amount))
+        }
+      })
+      .then(() => form.resetFields())
+      .then(() => setIsModalOpen2(false))
+      .then(() => asyncFetch())
       .catch(err => console.log(err))
 
+  }
 
-  };
 
 
   return (
@@ -182,9 +227,9 @@ const GraphPlot: React.FC = () => {
 
       <Title level={5}><span>Monthly Transaction Graph</span> <span style={{ float: "right" }}><Button type="primary" onClick={showModal}>Add Transaction</Button></span> </Title>
 
-      <div style={myDisplay ? fix : ori}  >
+      <div style={myDisplay ? {height:"150px"} : {height:"100%"}}  >
         <MonthTransactionGraph
-          data={data}
+          data={monthData}
           onReady={(plot: any) => {
             plot.on('plot:click', (evt: any) => {
               const { x, y } = evt;
@@ -199,7 +244,6 @@ const GraphPlot: React.FC = () => {
 
       <Title level={5}>
 
-
         <Tooltip title="Close Table">
           <div style={{ float: "left" }}>
             Transaction for Month
@@ -212,23 +256,26 @@ const GraphPlot: React.FC = () => {
         </div>
 
       </Title>
+
       <Table style={{ height: "100%" }}
         dataSource={transData}
         columns={columns}
         loading={loading}
-        pagination={{onChange:(page)=>{
-    
-        },
-         pageSize:3,
-         }}
+        pagination={{
+          onChange: (page) => {
+
+            handleGetMonthlyTransaction(singleData?.id, page)
+          },
+          pageSize: 3,
+          total: count
+        }}
       />
 
       <Modal title={<div>Add Transaction for {moment().format('MMMM Do YYYY')}</div>} open={isModalOpen} onOk={handleOk} onCancel={handleCancel} footer={null} okButtonProps={{ hidden: true }} cancelButtonProps={{ hidden: true }}  >
         <Form
           name="basic"
-          // labelCol={{ span: 8 }}
-          // wrapperCol={{ span: 16 }}
-          style={{ maxWidth: 600,height:"85px" }}
+          ref={null}
+          style={{ maxWidth: 600, height: "85px" }}
           initialValues={{ remember: true }}
 
           onFinish={onFinish}
@@ -242,7 +289,41 @@ const GraphPlot: React.FC = () => {
             <Input />
           </Form.Item>
 
-          <Form.Item style={{float:"right"}} >
+          <Form.Item style={{ float: "right" }} >
+            <Button type="primary" htmlType="submit">
+              Submit
+            </Button>
+          </Form.Item>
+        </Form>
+
+      </Modal>
+
+      <Modal title={<div>Update Transaction for {moment(updateData?.date).format('MMMM Do YYYY')}</div>} open={isModalOpen2} onOk={handleOk2} onCancel={handleCancel2} footer={null} okButtonProps={{ hidden: true }} cancelButtonProps={{ hidden: true }}  >
+        <Form
+          form={form}
+          name="basic"
+          initialValues={{ amount: updateData?.amount, id: updateData?.id }}
+          style={{ maxWidth: 600, height: "85px" }}
+          onFinish={onUpdate}
+          autoComplete="off"
+        >
+          <Form.Item
+            name="amount"
+            label="Amount"
+            rules={[{ required: true, message: 'Number only and do not leave the field empty ', pattern: new RegExp(/^[0-9]+$/) }]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            name="id"
+            hidden={true}
+          >
+            <Input />
+          </Form.Item>
+
+
+          <Form.Item style={{ float: "right" }} >
             <Button type="primary" htmlType="submit">
               Submit
             </Button>

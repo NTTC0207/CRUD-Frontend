@@ -1,25 +1,21 @@
 import {
-    AlipayCircleOutlined,
     LockOutlined,
-    MobileOutlined,
-    TaobaoCircleOutlined,
     UserOutlined,
-    WeiboCircleOutlined,
     MailOutlined ,
     CodeSandboxOutlined ,
   } from '@ant-design/icons';
   import {
     LoginForm,
     ProConfigProvider,
-    ProFormCaptcha,
     ProFormCheckbox,
     ProFormText,
   } from '@ant-design/pro-components';
   import { AuthenticationWrapper } from './style';
-  import { message, Space, Tabs ,Button,Divider,Tooltip} from 'antd';
+  import {  Space, Tabs ,Button,Divider,Tooltip} from 'antd';
   import type { CSSProperties } from 'react';
   import { useState } from 'react';
-  import { useCookies } from 'react-cookie';
+
+
 
   
   type LoginType =  'account' | 'register'; // this is actually number
@@ -33,10 +29,7 @@ import {
   
   const Login = () => {
     const [loginType, setLoginType] = useState<LoginType>('account');
-    const [authenticated, setAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState(undefined);
-  const [cookies] = useCookies(['XSRF-TOKEN']);
+
   
   const loginWithRedirect = () => {
     let port = (window.location.port ? ':' + window.location.port : '');

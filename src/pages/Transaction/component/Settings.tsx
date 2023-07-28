@@ -10,7 +10,6 @@ type ModeProps = {
     mode: boolean
 }
 
-
 const { Text } = Typography
 const Settings: React.FC<ModeProps> = ({ changeMode, mode }) => {
 
