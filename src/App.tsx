@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, Suspense, lazy } from 'react';
+import React, { useState, FC, useEffect, Suspense, lazy } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom'
 import { Button, ConfigProvider, Layout, ColorPicker, theme, Typography } from 'antd';
 import "./scss/main.scss"
@@ -12,7 +12,7 @@ const Login = lazy(() => import("./pages/Authentication/Login"))
 const Transaction = lazy(() => import("./pages/Transaction/Transaction"))
 
 
-const App: React.FC = () => {
+const App: FC = () => {
   const { t, i18n } = useTranslation();
   const [mode, setMode] = useState<boolean>(false);
   
@@ -44,18 +44,18 @@ const App: React.FC = () => {
         }}
       >
 
-        <div >
+        <Layout>
     
           <Navbar />
-      
-          <Suspense fallback={<Layout style={{ height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}> <Title level={1} >Loading ... </Title> </Layout>}>
+          <div style={{height:"64px"}}></div>
+          <Suspense fallback={<Layout className='AppLayout'> <Title level={1} >Loading ... </Title> </Layout>}>
             <Routes>
               <Route path='/auth' element={<Login />} />
               <Route path="/main/*" element={<Transaction changeMode={changeMode} mode={mode} />} />
               <Route path="/" element={<RootRedirect />} />
             </Routes>
           </Suspense>
-        </div>
+        </Layout>
 
       </ConfigProvider>
 

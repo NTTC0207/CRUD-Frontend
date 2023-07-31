@@ -1,17 +1,14 @@
 
+import {FC} from "react"
 import { Switch, Typography, Select, Col, Row } from 'antd'
 import { useTranslation } from 'react-i18next'
+import { ModeProps } from '../Interface/userTransactionInterface'
 
 
 
-
-type ModeProps = {
-    changeMode: () => void
-    mode: boolean
-}
 
 const { Text } = Typography
-const Settings: React.FC<ModeProps> = ({ changeMode, mode }) => {
+const Settings: FC<ModeProps> = ({ changeMode, mode }) => {
 
     const { t, i18n } = useTranslation();
 
@@ -20,7 +17,6 @@ const Settings: React.FC<ModeProps> = ({ changeMode, mode }) => {
         localStorage.setItem("language", e)
     }
 
-    console.log(localStorage.getItem("language"))
 
     return (
         <div style={{ padding: "20px" }}>
@@ -32,8 +28,6 @@ const Settings: React.FC<ModeProps> = ({ changeMode, mode }) => {
                 <Col>
                     <Switch checked={mode} onChange={changeMode} style={{ marginLeft: "5px" }} />
                 </Col>
-
-
 
             </Row>
 
@@ -55,14 +49,6 @@ const Settings: React.FC<ModeProps> = ({ changeMode, mode }) => {
                 </Col>
 
             </Row>
-
-
-
-
-
-
-
-
 
 
         </div>

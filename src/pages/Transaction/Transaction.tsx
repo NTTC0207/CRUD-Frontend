@@ -1,25 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect,FC } from 'react';
 import { Layout, theme, } from 'antd';
 import Settings from './component/Settings';
 import UserTransaction from './component/UserTransaction';
 import { Route, Routes } from 'react-router-dom';
-import { useTranslation } from "react-i18next";
 import GraphPlot from './component/GraphPlot';
 import Sidebar from './component/Sidebar';
-import { MonthlyTransaction } from './Interface/userTransactionInterface';
+import { MonthlyTransaction,ModeProps } from './Interface/userTransactionInterface';
 import { fetchMonthlyTransactions } from './API/userTransactionAPI';
 
 const { Content } = Layout;
 
 
 
-type ModeProps = {
-  changeMode: () => void
-  mode: boolean
-}
-
-
-const Transaction: React.FC<ModeProps> = ({ changeMode, mode }) => {
+const Transaction: FC<ModeProps> = ({ changeMode, mode }) => {
   const { token: { colorBgContainer }, } = theme.useToken(); // change theme config
   const [monthData, setData] = useState<MonthlyTransaction[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -41,16 +34,9 @@ const Transaction: React.FC<ModeProps> = ({ changeMode, mode }) => {
 
       <Sidebar />
 
+      <Layout className="MyLayout">
 
-      <Layout className="MyLayout" style={{ padding: '15px', height: "89.5vh" }}>
-
-        <Content
-          style={{
-            margin: 0,
-            minHeight: 400,
-            background: colorBgContainer,
-          }}
-        >
+        <Content style={{ margin: 0, minHeight: 400, background: colorBgContainer }} >
 
           <Routes>
             <Route path={`/`} element={<UserTransaction monthData={monthData} loading={loading} asyncFetch={asyncFetch} />} />

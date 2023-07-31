@@ -33,7 +33,7 @@ const Navbar: React.FC = () => {
   if( location.pathname!="/auth"){
   return (
     <Layout>
-    <div style={{ position: "relative", height: "64px", width: "100%", zIndex: "500" }}>
+    <div style={{ position: "fixed", height: "64px", width: "100%", zIndex: "500" }}>
       <div style={{ display: 'flex', alignItems: 'center', position: "fixed", width: "100%", height: "64px", zIndex: "100", overflow: "hidden", borderBottom: "1px solid #EAEAEA" }}>
         <div className="demo-logo" />
 

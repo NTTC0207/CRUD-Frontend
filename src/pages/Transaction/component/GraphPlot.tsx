@@ -7,7 +7,7 @@ import { CaretDownOutlined } from "@ant-design/icons"
 import { useCookies } from 'react-cookie';
 import type { TableColumnsType } from 'antd';
 import { useTranslation } from 'react-i18next'
-import { MonthlyTransaction } from '../Interface/userTransactionInterface';
+import { MonthlyTransaction,Trans,TransResponse } from '../Interface/userTransactionInterface';
 import { updateTransResponseById,sliceTransResponseById } from '../utils/userTransactionUtils';
 const {  Title } = Typography
 
@@ -18,17 +18,6 @@ type DataProps = {
   }
   
 
-interface Trans {
-  id: number
-  formattedDate: string
-  achievedQuota: number
-}
-
-interface TransResponse {
-  id: number
-  amount: number
-  date: string
-}
 
 const MonthTransactionGraph: React.FC<any> = memo(
 

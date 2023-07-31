@@ -2,6 +2,10 @@
     transition-duration: 0.5s;
 }
 
+html,body{
+	height: 100% !important;
+}
+
 *{
 
     
@@ -27,6 +31,15 @@
 }
 
 .MyLayout{
-	height: auto;
+	height: calc(100vh - 64px);
+	padding: 15px;
+}
+
+
+.AppLayout{
+height: 100vh;
+display: flex;
+justify-content: center;
+align-items: center;
 }
 
